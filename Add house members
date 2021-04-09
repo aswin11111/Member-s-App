@@ -1,0 +1,123 @@
+{% extends "admin_index1.html" %}
+{% block body %}
+<form action="/myapp/ward_add_housemember_post/" onsubmit="return validate()" method="post"  enctype="multipart/form-data" name="form1" id="form1">
+    {% csrf_token %}
+<h1 align="center">ADD HOUSE MEMBERS</h1>
+    <div align="center">
+  <table class="table table-bordered">
+       <tr>
+      <td>House</td>
+      <td><label for="name"></label>
+      <select name="hom" >
+          {% for i in data %}
+          <option value="{{ i.pk }}">{{ i.house_name }}</option>
+          {% endfor %}
+      </select></td>
+    </tr>
+    <tr>
+      <td>Name</td>
+      <td><label for="name"></label>
+      <input type="text" class='form-control' name="name" id="name1" required/></td>
+    </tr>
+    <tr>
+      <td>Email</td>
+      <td><label for="email"></label>
+      <input type="email" class='form-control' name="email" id="email" required/></td>
+    </tr>
+    <tr>
+      <td>Ph no</td>
+      <td><label for="phonenumber"></label>
+      <input type="text" class='form-control' name="phonenumber" id="phonenumber" /></td>
+    </tr>
+    <tr>
+      <td>Blood group</td>
+      <td><label for="bloodgroup"></label>
+      <input type="text" class='form-control' name="bloodgroup" id="bloodgroup" /></td>
+    </tr>
+    <tr>
+      <td>DOB</td>
+      <td><label for="DOB"></label>
+      <input type="date"  name="dob" id="DOB" /></td>
+    </tr>
+    <tr>
+      <td>Image</td>
+      <td><label for="fileField"></label>
+      <input type="file"  name="fileField" id="fileField" required/></td>
+    </tr>
+  </table>
+    <tr>
+      <td colspan="2"><div align="center">
+          <input type="submit"  width="100" height="200" class="btn btn-primary" name="housemember" id="housemember" value="Add" /></div></td>
+    </tr>
+
+    </div>
+</form>
+<script>
+    function validate(){
+        var letters = /^[A-Za-z ]+$/;
+        var add=document.getElementById('name1');
+        if(!add.value.match(letters))
+      {
+      alert(' Name should be alphabet only');
+      return false;
+      }
+
+       var numbers = /^\d{10}$/;
+        var cati=document.getElementById('phonenumber');
+        if(!cati.value.match(numbers))
+        {
+            alert('please enter 10 digits');
+
+        return false;
+        }
+
+
+
+        return true;
+        }
+
+    </script>
+
+
+
+
+
+
+{% endblock %}
+
+VIEW HOUSE MEMEBRS
+
+{% extends "admin_index1.html" %}
+{% block body %}
+<form id="form1" name="form1" method="post" action="">
+<h1 align="center">VIEW HOUSE MEMBERS</h1>
+    <div align="center">
+  <table class="table table-bordered">
+    <tr>
+      <td>SL No</td>
+      <td>Name</td>
+      <td>Email</td>
+      <td>Ph no</td>
+      <td>Blood group</td>
+      <td>DOB</td>
+      <td>Image</td>
+      <td>&nbsp;</td>
+      <td>&nbsp;</td>
+    </tr>
+      {% for i in data %}
+    <tr>
+      <td>{{ forloop.counter }}</td>
+      <td>{{ i.name }}</td>
+      <td>&nbsp;{{ i.email }}</td>
+      <td>{{ i.phone }}</td>
+      <td>{{ i.blood_group }}</td>
+      <td>{{ i.dob }}</td>
+      <td><img src="{{ i.image }}" height="50px" width="50"> </td>
+      <td><a href="/myapp/ward_edit_housemembers/{{ i.id }}">edit</a></td>
+      <td><a href="/myapp/ward_del_housemember/{{ i.id }}">delete</a></td>
+    </tr>
+       {% endfor %}
+  </table>
+    </div>
+</form>
+{% endblock %}
