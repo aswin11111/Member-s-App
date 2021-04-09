@@ -1,0 +1,128 @@
+{% extends "admin_index1.html" %}
+{% block body %}
+<form id="form1" name="form1" method="post"  action="/myapp/ward_add_houses_post/" onsubmit="return validate()">
+    {% csrf_token %}
+    <h1 align="center">ADD HOUSES</h1>
+    <div align="center">
+  <table class="table table-bordered">
+    <tr>
+      <td> House name</td>
+      <td><label for="textfield"></label>
+      <input type="text" name="textfield" class='form-control' id="textfield1"  required/></td>
+    </tr>
+    <tr>
+      <td>House no</td>
+      <td><label for="textfield1"></label>
+      <input type="text" name="textfield1" class='form-control' id="textfield2" required /></td>
+    </tr>
+    <tr>
+      <td>Place</td>
+      <td><label for="textfield2"></label>
+      <input type="text" name="textfield2" class='form-control'  id="textfield3" required/></td>
+    </tr>
+    <tr>
+      <td>Post</td>
+      <td><label for="textfield3"></label>
+      <input type="text" name="textfield3" class='form-control'  id="textfield4" required/></td>
+    </tr>
+    <tr>
+      <td>Pin</td>
+      <td><label for="textfield4"></label>
+      <input type="text" name="textfield4" class='form-control'  id="textfield5" required /></td>
+    </tr>
+    <tr>
+      <td>Landmark</td>
+      <td><label for="textfield5"></label>
+      <input type="text" name="textfield5" class='form-control' id="textfield6" required/></td>
+    </tr>
+    <tr>
+      <td>Category</td>
+      <td><label for="textfield6"></label>
+      <input type="text" name="textfield6" class='form-control' id="textfield7" required/></td>
+    </tr>
+    <tr>
+      <td>&nbsp;</td>
+      <td>
+      <input type="submit" name="ADD" id="ADD" value="ADD"  class="btn btn-success"/></td>
+    </tr>
+  </table>
+    </div>
+</form>
+ <script>
+    function validate(){
+        var letters = /^[A-Za-z]+$/;
+        var cate=document.getElementById('textfield1');
+        if(!cate.value.match(letters))
+      {
+      alert('House name should be alphabet only');
+      return false;
+      }
+
+       var numbers = /^[0-9]+$/;
+        var cati=document.getElementById('textfield2');
+        if(!cati.value.match(numbers))
+        {
+            alert('House no should be numbers only');
+
+        return false;
+        }
+
+      var letters = /^[A-Za-z]+$/;
+        var catm=document.getElementById('textfield3');
+        if(!catm.value.match(letters))
+      {
+      alert('place should be alphabet only');
+      return false;
+      }
+
+      var letters = /^[A-Za-z]+$/;
+        var catd=document.getElementById('textfield4');
+        if(!catd.value.match(letters))
+      {
+      alert('post should be alphabet only');
+      return false;
+      }
+
+       var numbers = /^[0-9]+$/;
+        var cat=document.getElementById('textfield5');
+        if(!cat.value.match(numbers))
+        {
+        alert('Pin should be numbers only');
+
+        return false;
+        }
+
+
+      var letters = /^[A-Za-z]+$/;
+        var catv=document.getElementById('textfield6');
+        if(!catv.value.match(letters))
+      {
+      alert('Landmark should be alphabet only');
+      return false;
+      }
+
+      var letters = /^[A-Za-z]+$/;
+        var catp=document.getElementById('textfield4');
+        if(!catp.value.match(letters))
+      {
+      alert('Category should be alphabet only');
+      return false;
+      }
+
+
+
+
+
+
+
+        return true;
+        }
+
+    </script>
+
+
+
+
+
+
+{% endblock %}
