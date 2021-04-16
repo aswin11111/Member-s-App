@@ -1,0 +1,38 @@
+{% extends "admin_index1.html" %}
+{% block body %}
+<form id="form1" name="form1" method="post" action="/myapp/ward_add_fundinformation_post/">
+    {% csrf_token %}
+    <h1 align="center"  >ADD FUND INFORMATION</h1>
+    <div align="center">
+  <table class="table table-bordered">
+    <tr>
+      <td>Information title</td>
+      <td><label for="textfield3"></label>
+      <input type="text" name="textfield3" id="textfield3" class='form-control' required/></td>
+    </tr>
+    <tr>
+      <td>Description</td>
+      <td><label for="textfield3"></label>
+        <label for="textarea"></label>
+      <textarea name="textarea" id="textarea" cols="45" rows="5" class='form-control' required></textarea></td>
+    </tr>
+    <tr>
+      <td>Date</td>
+      <td><label for="textfield2"></label>
+      <input type="date" name="textfield2" id="textfield2"  required/></td>
+    </tr>
+    <tr>
+      <td>Amount</td>
+      <td><label for="textfield"></label>
+      <input type="text" name="textfield" id="textfield" class='form-control' required /></td>
+    </tr>
+      </table>
+    <tr>
+      <td colspan="2"><div align="center">
+          <input type="submit" name="button" id="button" class="btn btn-primary" value="ADD" /></div></td>
+    </tr>
+
+    </div>
+</form>
+
+{% endblock %}
