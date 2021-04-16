@@ -1,0 +1,53 @@
+{% extends "admin_index1.html" %}
+{% block body %}
+<form id="form1" name="form1" method="post" action="/myapp/ward_add_contactbook_post/" onsubmit="return validate()">
+    <h1 align="center">ADD CONTACT BOOK</h1>
+    <div align="center">
+    {% csrf_token %}
+  <table class="table table-bordered">
+    <tr>
+      <td>Contact title</td>
+      <td><label for="textfield"></label>
+      <input type="text" name="textfield" class='form-control' id="textfield" required/></td>
+    </tr>
+    <tr>
+      <td>Contact name</td>
+      <td><label for="textfield2"></label>
+      <input type="text" name="textfield2" class='form-control' id="textfield2" required/></td>
+    </tr>
+    <tr>
+      <td>Ph no</td>
+      <td><label for="textfield3"></label>
+      <input type="text" name="textfield3" id="textfield3" class='form-control' required/></td>
+    </tr>
+      </table>
+    <tr>
+      <td colspan="2"><div align="center">
+          <input type="submit" name="button" id="button" class="btn btn-primary" value="ADD" /></div></td>
+    </tr>
+
+    </div>
+</form>
+    <script>
+    function validate(){
+        var letters = /^[A-Za-z ]+$/;
+        var cate=document.getElementById('textfield');
+        if(!cate.value.match(letters))
+      {
+      alert('name should be alphabet only');
+      return false;
+      }
+
+       var numbers = /^\d{10}$/;
+        var cati=document.getElementById('textfield3');
+        if(!cati.value.match(numbers))
+        {
+            alert('Phno should be numbers only');
+
+        return false;
+        }
+          return true;
+        }
+
+    </script>
+{% endblock %}
