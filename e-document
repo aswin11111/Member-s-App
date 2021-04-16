@@ -1,0 +1,24 @@
+{% extends "admin_index1.html" %}
+{% block body %}
+<form action="/myapp/ward_add_edocument_post/" method="post" enctype="multipart/form-data" name="form1" id="form1">{% csrf_token %}
+    <h1 align="center"  ><b>ADD E-DOCUMENT</b></h1>
+    <div align="center">
+  <table class="table table-bordered">
+    <tr>
+      <td>Document name</td>
+      <td><label for="textfield"></label>
+      <input type="text" name="textfield1" id="textfield" class='form-control' required/></td>
+    </tr>
+    <tr>
+      <td>Document</td>
+      <td><label for="fileField"></label>
+      <input type="file" name="fileField2" id="fileField" class='form-control'  required/></td>
+    </tr>
+    <tr>
+      <td colspan="2"><div align="center">
+          <input type="submit" name="button" id="button" value="ADD" class="btn btn-primary" /></div></td>
+    </tr>
+  </table>
+    </div>
+</form>
+{% endblock %}
