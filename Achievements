@@ -1,0 +1,70 @@
+{% extends "admin_index1.html" %}
+{% block body %}
+<form id="form1" name="form1" method="post" action="/myapp/ward_add_achievements_post/">
+    <h1 align="center"><b>ADD ACHIEVEMENTS</b></h1>
+    <div align="center">
+     {% csrf_token %}
+  <table class="table table-bordered">
+    <tr>
+      <td Style="font-size:120%;">Achievements name</td>
+      <td><label for="textfield"></label>
+      <input type="text" name="textfield1" class='form-control' required id="textfield" /></td>
+    </tr>
+    <tr>
+      <td Style="font-size:120%;">Report</td>
+      <td><label for="textarea"></label>
+      <textarea name="textarea2" id="textarea" cols="45"class='form-control' required rows="5"></textarea></td>
+    </tr>
+      </table>
+    <tr>
+      <td colspan="2"><div align="center">
+          <input type="submit" name="button" id="button" class="btn btn-primary" value="ADD" /></div></td>
+    </tr>
+
+    </div>
+</form>
+{% endblock %}
+
+
+VIEW
+
+{% extends "admin_index1.html" %}
+{% block body %}
+<form id="form1" name="form1" method="post" action="/myapp/ward_view_achievements_search/">{% csrf_token %}
+    <h1 align="center"><b>VIEW ACHIEVEMENTS</b></h1>
+    <div align="center">
+  <table class="table table-bordered">
+    <tr>
+      <td Style="font-size:120%;">From date</td>
+      <td><label for="textfield"></label>
+      <input type="date" name="textfield" class='form-control' id="textfield" required /></td>
+      <td Style="font-size:120%;">To date</td>
+      <td><label for="textfield2"></label>
+      <input type="date" name="textfield2" class='form-control' id="textfield2" required /></td>
+      <td><input type="submit" name="button" id="button" class="btn btn-danger" value="SEARCH" /></td>
+    </tr>
+  </table>
+  <table class="table table-bordered">
+    <tr>
+      <td Style="font-size:120%;">SL No</td>
+      <td Style="font-size:120%;">Date</td>
+      <td Style="font-size:120%;">Achievement name</td>
+      <td Style="font-size:120%;">Report</td>
+      <td>&nbsp;</td>
+      <td>&nbsp;</td>
+    </tr>
+      {% for i in data %}
+    <tr>
+      <td>&nbsp;{{ forloop.counter }}</td>
+      <td>{{ i.date }}</td>
+      <td>&nbsp;{{ i.achievements }}</td>
+      <td>{{ i.report }}</td>
+      <td><a href="/myapp/ward_edit_achievements/{{ i.id }}">Edit</a></td>
+      <td><a href="/myapp/ward_del_view_achievements/{{ i.id }}">Delete</a></td>
+    </tr>
+      {% endfor %}
+  </table>
+    </div>
+  <p>&nbsp;</p>
+</form>
+{% endblock %}
