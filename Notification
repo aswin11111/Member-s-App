@@ -1,0 +1,122 @@
+{% extends "admin_index1.html" %}
+{% block body %}
+<form id="form1" name="form1" method="post" action="/myapp/ward_add_notification_post/">{% csrf_token %}
+    <h1 align="center"  ><b>ADD NOTIFICATION</b></h1>
+    <div align="center">
+  <table class="table table-bordered">
+    <tr>
+      <td Style="font-size:120%;">Notification title</td>
+      <td><label for="textfield"></label>
+      <input type="text" name="textfield1" id="textfield" required class='form-control'/></td>
+    </tr>
+    <tr>
+      <td Style="font-size:120%;">Description</td>
+      <td><label for="textarea"></label>
+      <textarea name="textarea2" id="textarea" cols="45" rows="5" required class='form-control'></textarea></td>
+    </tr>
+    <tr>
+      <td colspan="2"><div align="center">
+          <input type="submit" name="button" id="button" value="Add" /></div></td>
+    </tr>
+  </table>
+    </div>
+</form>
+{% endblock %}
+
+VIEW
+
+{% extends "admin_index1.html" %}
+{% block body %}
+<form id="form1" name="form1" method="post" action="/myapp/ward_view_notification_search/">
+<h1 align="center"  ><b>VIEW NOTIFICATION</b></h1>
+    <div align="center">
+  <table  class="table table-bordered">
+    <tr>
+      <td Style="font-size:120%;">From date</td>
+      <td><label for="textfield"></label>
+      <input type="date" name="textfield" id="textfield" required class='form-control'/></td>
+      <td Style="font-size:120%;">To date</td>
+      <td><label for="textfield2"></label>
+      <input type="date" name="textfield2" id="textfield2" required class='form-control'/></td>
+      <td><input type="submit" name="button" id="button" value="Go" class="btn btn-primary" /></td>
+    </tr>
+  </table>
+  <table class="table table-bordered">
+    <tr>
+      <td Style="font-size:120%;">SL No</td>
+      <td Style="font-size:120%;">Date</td>
+      <td Style="font-size:120%;">Notification title</td>
+      <td Style="font-size:120%;">Description</td>
+      <td>&nbsp;</td>
+      <td>&nbsp;</td>
+    </tr>
+      {% for i in data %}
+    <tr>
+      <td>{{ forloop.counter }}</td>
+      <td>{{ i.date }}</td>
+      <td>{{ i.notification_title }}</td>
+      <td>&nbsp;{{ i.description }}</td>
+      <td><a href="/myapp/ward_edit_notification/{{ i.id }}">Edit</a></td>
+      <td><a href="/myapp/ward_del_view_notification/{{ i.id }}">Delete</a></td>
+    </tr>
+      {% endfor %}
+  </table>
+  <p>&nbsp;</p>
+    </div>
+</form>
+{% endblock %}
+
+VIEWS
+
+def ward_add_notification(request):
+    return render(request,"Ward member/Addnotification9.html")
+
+def ward_add_notification_post(request):
+
+    notification_title=request.POST['textfield1']
+    print('notification_title')
+    description = request.POST['textarea2']
+    print('description')
+    obj = notification(notification_title=notification_title,description=description,date=datetime.date.today())
+    obj.save()
+    return render(request, "Ward member/Addnotification9.html")
+
+
+def ward_view_notification(request):
+    res = notification.objects.all()
+    return render(request,"Ward member/Viewnotification9.html",{'data':res})
+
+def ward_edit_notification(request,id):
+    res=notification.objects.get(pk=id)
+    request.session['nopd']=id
+    return render(request, "Ward member/editnotification.html",{'data': res})
+
+def ward_edit_notification_post(request):
+    notification_title = request.POST['textfield']
+
+    description = request.POST['textarea']
+
+
+
+    noid=request.session['nopd']
+    obj=notification.objects.get(pk=noid)
+    obj.notification_title=notification_title
+    obj.description=description
+
+
+    obj.save()
+    return redirect('/myapp/ward_view_notification/')
+
+def ward_del_view_notification(request,id):
+    res=notification.objects.get(pk=id)
+    res.delete()
+    return redirect('/myapp/ward_view_notification/')
+
+def ward_view_notification_search(request):
+    if request.method=="POST":
+        date1=request.POST['textfield']
+        date2=request.POST['textfield2']
+        comp_obj=notification.objects.filter(date__gte=date1,date__lte=date2)
+        return render(request, "Ward member/Viewnotification9.html", {'data': comp_obj})
+    comp_obj=notification.objects.all()
+    return render(request,"Ward member/Viewnotification9.html",{'data':comp_obj})
