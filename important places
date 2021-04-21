@@ -1,0 +1,66 @@
+{% extends "admin_index1.html" %}
+{% block body %}
+<form id="form1" name="form1" method="post" action="/myapp/ward_add_impplaces_post/">
+    <h1 align="center"  ><b>ADD IMPORTANT PLACES</b></h1>
+    <div align="center">
+    {% csrf_token %}
+  <table class="table table-bordered">
+    <tr>
+      <td Style="font-size:120%;">Name</td>
+      <td><label for="textfield"></label>
+      <input type="text" name="textfield1" id="textfield" class='form-control' required/></td>
+    </tr>
+    <tr>
+      <td Style="font-size:120%;">Longitude</td>
+      <td><label for="textfield2"></label>
+      <input type="text" name="textfield2" id="textfield2" class='form-control' required/></td>
+    </tr>
+    <tr>
+      <td Style="font-size:120%;">Latitude</td>
+      <td><label for="textfield3"></label>
+      <input type="text" name="textfield3" id="textfield3" class='form-control' required/></td>
+    </tr>
+      </table>
+    <tr>
+      <td colspan="2"><div align="center">
+          <input type="submit" name="button" id="button" value="ADD" class="btn btn-primary" /></div></td>
+    </tr>
+
+    </div>
+</form>
+{% endblock %}
+
+
+
+VIEW
+
+{% extends "admin_index1.html" %}
+{% block body %}
+<form id="form1" name="form1" method="post" action="">
+    <h1 align="center"><b>VIEW IMPORTANT PLACES</b></h1>
+    <div align="center">
+  <table class="table table-bordered">
+    <tr>
+      <td Style="font-size:120%;">SL No</td>
+      <td Style="font-size:120%;">Name</td>
+      <td Style="font-size:120%;">Longitude</td>
+      <td Style="font-size:120%;">Altitude</td>
+      <td>&nbsp;</td>
+      <td>&nbsp;</td>
+      <td>&nbsp;</td>
+    </tr>
+      {% for i in data %}
+    <tr>
+      <td>&nbsp;{{ forloop.counter }} </td>
+      <td>{{ i.name }}</td>
+      <td>{{ i.longitude }}</td>
+      <td>{{ i.latitude }}</td>
+      <td><a href="/myapp/ward_edit_impplaces/{{ i.id }}">Edit</a></td>
+      <td><a href="/myapp/ward_del_view_impplaces/{{ i.id }}">Delete</a></td>
+      <td><a href="https://maps.google.com/maps?q={{ i.latitude }},{{ i.longitude }}">Map</a></td>
+    </tr>
+      {% endfor %}
+  </table>
+    </div>
+</form>
+{% endblock %}
