@@ -1,0 +1,44 @@
+{% extends "admin_index1.html" %}
+{% block body %}
+<form id="form1" name="form1" method="post" action="/myapp/ward_bloodgroup_search/">
+<h1 align="center"  ><b>BLOOD SEARCH</b></h1>
+    <div align="center">
+  <table class="table table-bordered">
+    <tr>
+      <td>Blood group</td>
+      <td><label for="select"></label>
+        <select name="select" id="select">
+            <option>A+ve</option>
+            <option>A-ve</option>
+            <option>O+ve</option>
+            <option>O-ve</option>
+            <option>B+ve</option>
+            <option>B-ve</option>
+            <option>AB+ve</option>
+            <option>AB-ve</option>
+      </select></td>
+      <td><input type="submit" name="button" id="button" class="btn btn-primary" value="Search" /></td>
+    </tr>
+  </table>
+  <table class="table table-bordered">
+    <tr>
+      <td>SL No</td>
+      <td>Name</td>
+      <td>Ph no</td>
+      <td>Email</td>
+      <td>Photo</td>
+    </tr>
+      {% for i in data %}
+    <tr>
+      <td>{{ forloop.counter }}</td>
+      <td>{{ i.name }}</td>
+      <td>{{ i.phone }}</td>
+      <td>&nbsp;{{ i.email }}</td>
+      <td>&nbsp;<img src="{{ i.image }}" height="50px" width="50"> </td>
+    </tr>
+      {% endfor %}
+  </table>
+    </div>
+</form>
+{% endblock %}
+
