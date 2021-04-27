@@ -1,0 +1,378 @@
+package com.example.mapp;
+
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+
+import android.content.SharedPreferences;
+import android.os.Bundle;
+import android.widget.ImageView;
+import android.preference.PreferenceManager;
+import android.graphics.Color;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+import com.squareup.picasso.Picasso;
+import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
+
+public class ViewProfile extends AppCompatActivity {
+    ImageView img;
+    TextView name,email,house,phonenumber,bloodgroup,houseno,landmark;
+
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_view_profile);
+
+        name= findViewById(R.id.name);
+        img= findViewById(R.id.img);
+        email= findViewById(R.id.email);
+        house= findViewById(R.id.housename);
+        phonenumber= findViewById(R.id.phone);
+        bloodgroup= findViewById(R.id.bloodgroup);
+        houseno= findViewById(R.id.houseno);
+        landmark= findViewById(R.id.landmark);
+
+        SharedPreferences sh = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+
+        String hu = sh.getString("ip", "");
+        String url = "http://" + hu + ":8000/myapp/and_profile";
+        RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
+        StringRequest postRequest = new StringRequest(Request.Method.POST, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        //  Toast.makeText(getApplicationContext(), response, Toast.LENGTH_LONG).show();
+
+                        // response
+                        try {
+                            JSONObject jsonObj = new JSONObject(response);
+                            if (jsonObj.getString("status").equalsIgnoreCase("ok")) {
+                                String name22=jsonObj.getString("name");
+                                String email22=jsonObj.getString("email");
+                                String housename22=jsonObj.getString("house");
+                                String phonenumber22=jsonObj.getString("phonenumber");
+                                String bloodgroup22=jsonObj.getString("bloodgroup");
+                                String houseno22=jsonObj.getString("houseno");
+                                String landmark22=jsonObj.getString("landmark");
+                                String img22=jsonObj.getString("image");
+
+
+                                name.setTextColor(Color.BLACK);
+                                email.setTextColor(Color.BLACK);
+                                house.setTextColor(Color.BLACK);
+                                phonenumber.setTextColor(Color.BLACK);
+                                bloodgroup.setTextColor(Color.BLACK);
+                                houseno.setTextColor(Color.BLACK);
+                                landmark.setTextColor(Color.BLACK);
+
+
+
+                                name.setText(name22);
+                                email.setText(email22);
+                                house.setText(housename22);
+                                phonenumber.setText(phonenumber22);
+                                bloodgroup.setText(bloodgroup22);
+                                houseno.setText(houseno22);
+                                landmark.setText(landmark22);
+
+
+                                SharedPreferences sh= PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                                String ip=sh.getString("ip","");
+                                SharedPreferences.Editor ed=sh.edit();
+                                ed.putString("img",img22);
+                                ed.commit();
+                                String url="http://" + ip + ":8000"+img22;
+                                Toast.makeText(getApplicationContext(), "pt="+url , Toast.LENGTH_SHORT).show();
+                                Picasso.with(getApplicationContext()).load(url).into(img);
+
+                            }
+
+
+                            // }
+                            else {
+                                Toast.makeText(getApplicationContext(), "Not found", Toast.LENGTH_LONG).show();
+                            }
+
+                        } catch (Exception e) {
+                            Toast.makeText(getApplicationContext(), "Error" + e.getMessage().toString(), Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        // error
+                        Toast.makeText(getApplicationContext(), "eeeee" + error.toString(), Toast.LENGTH_SHORT).show();
+                    }
+                }
+        ) {
+            @Override
+            protected Map<String, String> getParams() {
+                SharedPreferences sh = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                Map<String, String> params = new HashMap<String, String>();
+
+                String id=sh.getString("lid","");
+
+                params.put("lid",id);
+
+                return params;
+            }
+        };
+
+        int MY_SOCKET_TIMEOUT_MS = 100000;
+
+        postRequest.setRetryPolicy(new DefaultRetryPolicy(
+                MY_SOCKET_TIMEOUT_MS,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        requestQueue.add(postRequest);
+
+
+    }
+
+
+}
+
+
+
+Design
+
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="14dp"
+    tools:context=".ViewProfile">
+
+
+
+        <ImageView
+            android:id="@+id/img"
+            android:layout_width="200dp"
+
+            android:layout_height="200dp"
+            android:layout_marginStart="91dp"
+            android:layout_marginLeft="91dp"
+            android:layout_marginTop="16dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+        </ImageView>
+
+        <TextView
+            android:id="@+id/name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:layout_marginStart="27dp"
+            android:layout_marginLeft="27dp"
+            android:layout_marginTop="22dp"
+            android:hint="Name"
+            android:textSize="20sp"
+            app:layout_constraintStart_toEndOf="@+id/textView2"
+            app:layout_constraintTop_toBottomOf="@+id/img" />
+
+        <TextView
+
+            android:id="@+id/textView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:layout_marginStart="34dp"
+            android:layout_marginLeft="34dp"
+            android:textColor="@color/darkblue"
+            android:layout_marginTop="22dp"
+            android:text="NAME              :"
+
+            android:textSize="20sp"
+            android:textStyle="normal"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/img" />
+
+        <TextView
+            android:id="@+id/email"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:layout_marginStart="30dp"
+            android:layout_marginLeft="30dp"
+            android:layout_marginTop="21dp"
+            android:hint="Email"
+            android:textSize="15sp"
+            app:layout_constraintStart_toEndOf="@+id/textView3"
+            app:layout_constraintTop_toBottomOf="@+id/name" />
+
+        <TextView
+
+            android:id="@+id/textView3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:layout_marginLeft="32dp"
+            android:layout_marginTop="14dp"
+            android:text="EMAIL              :"
+            android:textColor="@color/darkblue"
+            android:textSize="20sp"
+            android:textStyle="normal"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView2" />
+
+        <TextView
+            android:id="@+id/housename"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:layout_marginStart="24dp"
+            android:layout_marginLeft="24dp"
+            android:layout_marginTop="20dp"
+            android:hint="housename"
+            android:textSize="20sp"
+            app:layout_constraintStart_toEndOf="@+id/textView4"
+            app:layout_constraintTop_toBottomOf="@+id/email" />
+
+        <TextView
+
+            android:id="@+id/textView4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:layout_marginLeft="32dp"
+            android:layout_marginTop="20dp"
+            android:text="HOUSE NAME :"
+            android:textColor="@color/darkblue"
+            android:textSize="20sp"
+            android:textStyle="normal"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView3" />
+
+        <TextView
+            android:id="@+id/phone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:layout_marginStart="25dp"
+            android:layout_marginLeft="25dp"
+            android:layout_marginTop="18dp"
+            android:hint="phone number"
+            android:textSize="20sp"
+            app:layout_constraintStart_toEndOf="@+id/textView5"
+            app:layout_constraintTop_toBottomOf="@+id/housename" />
+
+        <TextView
+
+            android:id="@+id/textView5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="34dp"
+            android:layout_marginLeft="34dp"
+            android:textColor="@color/darkblue"
+            android:layout_marginTop="18dp"
+            android:text="PHONE NO      :"
+
+            android:textSize="20sp"
+            android:textStyle="normal"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView4" />
+
+        <TextView
+            android:id="@+id/bloodgroup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:layout_marginStart="25dp"
+            android:layout_marginLeft="25dp"
+            android:layout_marginTop="20dp"
+            android:hint="blood group"
+            android:textSize="20sp"
+            app:layout_constraintStart_toEndOf="@+id/textView6"
+            app:layout_constraintTop_toBottomOf="@+id/phone" />
+
+        <TextView
+
+            android:id="@+id/textView6"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="34dp"
+            android:layout_marginLeft="34dp"
+            android:layout_marginTop="21dp"
+            android:textColor="@color/darkblue"
+            android:text="BLOOD GROUP:"
+
+            android:textSize="20sp"
+            android:textStyle="normal"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView5" />
+
+        <TextView
+            android:id="@+id/houseno"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:layout_marginStart="19dp"
+            android:layout_marginLeft="19dp"
+            android:layout_marginTop="19dp"
+            android:hint="house no"
+            android:textSize="20sp"
+            app:layout_constraintStart_toEndOf="@+id/textView7"
+            app:layout_constraintTop_toBottomOf="@+id/bloodgroup" />
+
+        <TextView
+
+            android:id="@+id/textView7"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="34dp"
+            android:layout_marginLeft="34dp"
+            android:layout_marginTop="19dp"
+            android:textColor="@color/darkblue"
+            android:text="HOUSE NO       : "
+
+            android:textSize="20sp"
+            android:textStyle="normal"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView6" />
+
+        <TextView
+            android:id="@+id/landmark"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="14dp"
+            android:hint="landmark"
+            android:textSize="20sp"
+            app:layout_constraintStart_toEndOf="@+id/textView8"
+            app:layout_constraintTop_toBottomOf="@+id/houseno" />
+
+        <TextView
+
+            android:id="@+id/textView8"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="34dp"
+            android:layout_marginLeft="34dp"
+            android:layout_marginTop="13dp"
+            android:text="LANDMARK     :"
+            android:textColor="@color/darkblue"
+            android:textSize="20sp"
+            android:textStyle="normal"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView7" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
