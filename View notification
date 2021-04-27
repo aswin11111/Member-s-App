@@ -1,0 +1,166 @@
+Java code
+
+
+package com.example.mapp;
+
+import androidx.appcompat.app.AppCompatActivity;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
+import android.widget.ArrayAdapter;
+
+import android.os.Bundle;
+import android.widget.ListView;
+
+import android.widget.Toast;
+
+import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
+
+public class Notification extends AppCompatActivity {
+       ListView lv;
+    String[]notification_title,description,date,id;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_notification);
+        lv= findViewById(R.id.notiflv);
+        SharedPreferences sh = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        String ip = sh.getString("ip", "");
+        String url = "http://" + ip + ":8000/myapp/and_notification";
+        RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
+        //    Toast.makeText(getApplicationContext(),"hai",Toast.LENGTH_SHORT).show();
+        StringRequest postRequest = new StringRequest(Request.Method.POST, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+
+                        //  Toast.makeText(getApplicationContext(),response,Toast.LENGTH_SHORT).show();
+
+
+                        // response
+                        try {
+                            JSONObject jsonObj = new JSONObject(response);
+                            String sucs = jsonObj.getString("status");
+                            if (sucs.equalsIgnoreCase("ok")) {
+//                                lid,name,place,photo,district,latitude,longitude
+
+                                JSONArray jsa = jsonObj.getJSONArray("data");
+                                id = new String[jsa.length()];
+
+
+                                notification_title = new String[jsa.length()];
+                                description = new String[jsa.length()];
+                                date=new String[jsa.length()];
+
+
+                                //sof,vno,amount,date
+
+                                for (int i = 0; i < jsa.length(); i++) {
+                                    JSONObject jsob = jsa.getJSONObject(i);
+                                    id[i] = jsob.getString("id");
+
+
+                                    notification_title[i] = jsob.getString("notification_title");
+                                    description[i] = jsob.getString("description");
+                                    date[i]=jsob.getString("date");
+
+
+
+
+                                }
+                               // ArrayAdapter<String> ad=new ArrayAdapter<String>(getApplicationContext(),android.R.layout.simple_list_item_1,notification_title);
+                                //lv.setAdapter(ad);
+                               lv.setAdapter(new custom_notification(getApplicationContext(), date,notification_title,description));
+                                //    lv.setAdapter(new user_custom_view_worker(getApplicationContext(),id,achievements,date,report));
+
+
+                                //lv1.setAdapter(new Custom5(getApplicationContext(),id,plc,time));
+                            }
+                        } catch (Exception e) {
+                            Toast.makeText(getApplicationContext(), "eeeee" + e.toString(), Toast.LENGTH_LONG).show();
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        // error
+                        Toast.makeText(getApplicationContext(), "eeeee" + error.toString(), Toast.LENGTH_SHORT).show();
+                    }
+                }
+        ) {
+            @Override
+            protected Map<String, String> getParams() {
+                SharedPreferences sh = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                Map<String, String> params = new HashMap<String, String>();
+
+
+
+
+                return params;
+            }
+        };
+        postRequest.setRetryPolicy(new DefaultRetryPolicy(60000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
+
+        requestQueue.add(postRequest);
+
+
+    }
+}
+
+
+
+DESIGN
+
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Notification">
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="NOTIFICATION"
+        android:textAlignment="center"
+        android:gravity="center_horizontal"
+        android:textSize="30dp"
+        android:textColor="@color/blue"/>
+
+
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/fullwhite"
+        android:layout_marginTop="60dp">
+
+
+
+        <ListView
+            android:id="@+id/notiflv"
+            android:layout_width="match_parent"
+
+            android:layout_height="match_parent"
+
+            >
+
+        </ListView>
+    </LinearLayout>
+
+</RelativeLayout>
