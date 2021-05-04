@@ -1,0 +1,347 @@
+package com.example.mapp;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
+import android.os.Bundle;
+import android.util.Base64;
+import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.preference.PreferenceManager;
+import android.graphics.Color;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+import com.squareup.picasso.Picasso;
+import org.json.JSONObject;
+
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.net.URISyntaxException;
+import java.util.HashMap;
+import java.util.Map;
+
+public class ViewProfile extends AppCompatActivity implements View.OnClickListener {
+    ImageView img;
+    EditText name,email,house,phonenumber,bloodgroup,houseno,landmark;
+    Button b1;
+
+    String path, atype, fname, attach, attatch1;
+    byte[] byteArray = null;
+
+
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_view_profile);
+
+        name= findViewById(R.id.editTextTextPersonName);
+        img= findViewById(R.id.img);
+        email= findViewById(R.id.editTextTextPersonName2);
+        house= findViewById(R.id.editTextTextPersonName3);
+        phonenumber= findViewById(R.id.editTextTextPersonName5);
+        bloodgroup= findViewById(R.id.editTextTextPersonName6);
+        houseno= findViewById(R.id.editTextTextPersonName7);
+        landmark= findViewById(R.id.editTextTextPersonName8);
+        b1=findViewById(R.id.button1);
+        b1.setOnClickListener(this);
+        img.setOnClickListener(this);
+
+        SharedPreferences sh = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+
+        String hu = sh.getString("ip", "");
+        String url = "http://" + hu + ":8000/myapp/and_profile";
+        RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
+        StringRequest postRequest = new StringRequest(Request.Method.POST, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        //  Toast.makeText(getApplicationContext(), response, Toast.LENGTH_LONG).show();
+
+                        // response
+                        try {
+                            JSONObject jsonObj = new JSONObject(response);
+                            if (jsonObj.getString("status").equalsIgnoreCase("ok")) {
+                                String name22=jsonObj.getString("name");
+                                String email22=jsonObj.getString("email");
+                                String housename22=jsonObj.getString("house");
+                                String phonenumber22=jsonObj.getString("phonenumber");
+                                String bloodgroup22=jsonObj.getString("bloodgroup");
+                                String houseno22=jsonObj.getString("houseno");
+                                String landmark22=jsonObj.getString("landmark");
+                                String img22=jsonObj.getString("image");
+
+
+
+
+
+
+                                name.setText(name22);
+                                email.setText(email22);
+                                house.setText(housename22);
+                                phonenumber.setText(phonenumber22);
+                                bloodgroup.setText(bloodgroup22);
+                                houseno.setText(houseno22);
+                                landmark.setText(landmark22);
+
+
+
+                                SharedPreferences sh= PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                                String ip=sh.getString("ip","");
+                                SharedPreferences.Editor ed=sh.edit();
+                                ed.putString("img",img22);
+                                ed.commit();
+                                String url="http://" + ip + ":8000"+img22;
+                                Toast.makeText(getApplicationContext(), "View profile"  , Toast.LENGTH_SHORT).show();
+                                Picasso.with(getApplicationContext()).load(url).into(img);
+
+                            }
+
+
+                            // }
+                            else {
+                                Toast.makeText(getApplicationContext(), "Not found", Toast.LENGTH_LONG).show();
+                            }
+
+                        } catch (Exception e) {
+                            Toast.makeText(getApplicationContext(), "Error" + e.getMessage().toString(), Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        // error
+                        Toast.makeText(getApplicationContext(), "eeeee" + error.toString(), Toast.LENGTH_SHORT).show();
+                    }
+                }
+        ) {
+            @Override
+            protected Map<String, String> getParams() {
+                SharedPreferences sh = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                Map<String, String> params = new HashMap<String, String>();
+
+                String id=sh.getString("lid","");
+
+                params.put("lid",id);
+
+                return params;
+            }
+        };
+
+        int MY_SOCKET_TIMEOUT_MS = 100000;
+
+        postRequest.setRetryPolicy(new DefaultRetryPolicy(
+                MY_SOCKET_TIMEOUT_MS,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        requestQueue.add(postRequest);
+
+
+    }
+
+    void showfilechooser(int string) {
+        // TODO Auto-generated method stub
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        //getting all types of files
+
+        intent.setType("*/*");
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+
+        try {
+            startActivityForResult(Intent.createChooser(intent, "Select a File to Upload"), string);
+        } catch (android.content.ActivityNotFoundException ex) {
+            // Potentially direct the user to the Market with a Dialog
+            Toast.makeText(getApplicationContext(), "Please install a File Manager.", Toast.LENGTH_SHORT).show();
+
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK) {
+            if (requestCode == 1) {
+                ////
+                Uri uri = data.getData();
+
+                try {
+                    path = FileUtils.getPath(this, uri);
+
+                    File fil = new File(path);
+                    float fln = (float) (fil.length() / 1024);
+                    atype = path.substring(path.lastIndexOf(".") + 1);
+
+
+                    fname = path.substring(path.lastIndexOf("/") + 1);
+                } catch (URISyntaxException e) {
+                    e.printStackTrace();
+                }
+
+                try {
+
+                    File imgFile = new File(path);
+
+                    if (imgFile.exists()) {
+
+                        Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
+                        img.setImageBitmap(myBitmap);
+
+                    }
+
+
+                    File file = new File(path);
+                    byte[] b = new byte[8192];
+                    Log.d("bytes read", "bytes read");
+
+                    InputStream inputStream = new FileInputStream(file);
+                    ByteArrayOutputStream bos = new ByteArrayOutputStream();
+
+                    int bytesRead = 0;
+
+                    while ((bytesRead = inputStream.read(b)) != -1) {
+                        bos.write(b, 0, bytesRead);
+                    }
+                    byteArray = bos.toByteArray();
+
+                    String str = Base64.encodeToString(byteArray, Base64.NO_WRAP);
+                    attach = str;
+
+
+                } catch (Exception e) {
+                    Toast.makeText(this, "String :" + e.getMessage().toString(), Toast.LENGTH_LONG).show();
+                }
+
+
+            }
+        }
+    }
+
+    @Override
+    public void onClick(View view) {
+        if(view==img)
+        {
+            showfilechooser(1);
+        }
+        if (view == b1) {
+            final String name1 = name.getText().toString();
+            final String email11 = email.getText().toString();
+           // final String house11 = house.getText().toString();
+            final String phonenumber11 = phonenumber.getText().toString();
+            final String bloodgroup11 = bloodgroup.getText().toString();
+          //  final String houseno11 = houseno.getText().toString();
+            final String landmark11 = landmark.getText().toString();
+
+
+
+
+
+//            if (password.equalsIgnoreCase(confirm_password)) {
+
+                SharedPreferences sh = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+
+                final String hu = sh.getString("ip", "");
+                String url = "http://" + hu + ":8000/myapp/and_edit_profile";
+
+
+                RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
+                StringRequest postRequest = new StringRequest(Request.Method.POST, url,
+                        new Response.Listener<String>() {
+                            @Override
+                            public void onResponse(String response) {
+                                //  Toast.makeText(getApplicationContext(), response, Toast.LENGTH_LONG).show();
+
+                                // response
+                                try {
+                                    JSONObject jsonObj = new JSONObject(response);
+                                    if (jsonObj.getString("status").equalsIgnoreCase("ok")) {
+//
+
+                                    }
+
+
+                                    // }
+                                    else {
+                                        Toast.makeText(getApplicationContext(), "Not found", Toast.LENGTH_LONG).show();
+                                    }
+
+                                } catch (Exception e) {
+                                    Toast.makeText(getApplicationContext(), "Error" + e.getMessage().toString(), Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        },
+                        new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+                                // error
+                                Toast.makeText(getApplicationContext(), "eeeee" + error.toString(), Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                ) {
+                    @Override
+                    protected Map<String, String> getParams() {
+                        SharedPreferences sh = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                        Map<String, String> params = new HashMap<String, String>();
+
+                String id=sh.getString("lid","");
+                        params.put("lid",id);
+                        params.put("t3",name1);
+                        params.put("t5", email11);
+
+                        params.put("t7", phonenumber11);
+                        params.put("t4",bloodgroup11);
+
+                        params.put("t6", landmark11);
+//                        params.put("post", post);
+//                        params.put("pin", pin);
+//
+//                        params.put("dis", district);
+//
+//
+//                        params.put("email", );
+//
+//                        params.put("pwd", confirm_password);
+                        params.put("t8",attach);
+
+//                params.put("mac",maclis);
+
+                        return params;
+                    }
+                };
+
+                int MY_SOCKET_TIMEOUT_MS = 100000;
+
+                postRequest.setRetryPolicy(new DefaultRetryPolicy(
+                        MY_SOCKET_TIMEOUT_MS,
+                        DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                        DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+                requestQueue.add(postRequest);
+
+
+            } else {
+
+               // Toast.makeText(this, "Password doesn't match ,Try again!!", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
