@@ -1,0 +1,40 @@
+{% extends "admin_index1.html" %}
+{% block body %}
+<form id="form1" name="form1" method="post" action="/myapp/ward_view_needrequest/">
+<h1 align="center"><b>NEED REQUESTS</b></h1>
+    <div align="center">
+  <table  class="table table-bordered">
+    <tr>
+      <td>From date</td>
+      <td><label for="textfield"></label>
+      <input type="date" name="search1" id="textfield" required class='form-control'/></td>
+      <td>To date</td>
+      <td><label for="textfield2"></label>
+      <input type="date" name="search2" id="textfield2" required class='form-control'/></td>
+      <td><input type="submit" name="button" id="button" value="Go" /></td>
+    </tr>
+  </table>
+  <table  class="table table-bordered">
+    <tr>
+        <td><b>SL No</b></td>
+        <td><b>Date</b></td>
+        <td><b>User info</b></td>
+        <td><b>Need</b></td>
+        <td><b>Status</b></td>
+      <td>&nbsp;</td>
+    </tr>
+      {% for i in data %}
+    <tr>
+      <td>{{ forloop.counter }}</td>
+      <td>{{ i.date }}</td>
+      <td>&nbsp;{{ i.MEMBER.name }}<br>{{ i.MEMBER.email }}<br>{{ i.MEMBER.phone}}</td>
+      <td>{{ i.needs }}</td>
+        <td>{{  i.status}}</td>
+      <td><a href="/myapp/ward_add_needrequestreply/{{ i.id }}/{{ i.needs }}">reply</a></td>
+    </tr>
+      {% endfor %}
+  </table>
+  <p>&nbsp;</p>
+    </div>
+</form>
+{% endblock %}
