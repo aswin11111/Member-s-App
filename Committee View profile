@@ -1,0 +1,28 @@
+{% extends "cmt_index.html" %}
+{% block body %}
+<form id="form1" name="form1" method="post" action="">
+  <table width="200" border="1">
+    <tr>
+      <td>&nbsp;</td>
+      <td> <img src="{{ data.image }}" height="100" width="100"></td>
+    </tr>
+    <tr>
+      <td>Committee name</td>
+      <td>&nbsp;{{ data.committee }}</td>
+    </tr>
+    <tr>
+      <td>Name</td>
+      <td>{{ data.name }}</td>
+    </tr>
+    <tr>
+      <td>Ph no</td>
+      <td>&nbsp;{{ data.phonenumber }}</td>
+    </tr>
+       <tr>
+      <td>Email</td>
+      <td>{{ data.email }}</td>
+    </tr>
+
+  </table>
+</form>
+{% endblock %}
