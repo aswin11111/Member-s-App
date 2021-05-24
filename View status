@@ -1,0 +1,27 @@
+{% extends "admin_index1.html" %}
+{% block body %}
+<form id="form1" name="form1" method="post" action="/myapp/ward_view_workstatus/">
+<h1 align="center"  ><b>STATUS</b></h1>
+    <div align="center">
+
+  <table  class="table table-bordered">
+    <tr>
+      <td>SL No</td>
+      <td>Date</td>
+
+      <td>Status</td>
+    </tr>
+      {% for i in data2 %}
+    <tr>
+      <td>&nbsp;{{ forloop.counter }}</td>
+      <td>&nbsp;{{ i.date }}</td>
+
+
+      <td>&nbsp;{{ i.satus }}</td>
+
+    </tr>
+      {% endfor %}
+  </table>
+    </div>
+</form>
+{% endblock %}
