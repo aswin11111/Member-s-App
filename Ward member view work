@@ -1,0 +1,51 @@
+{% extends "admin_index1.html" %}
+{% block body %}
+<form id="form1" name="form1" method="post" action="/myapp/ward_view_workstatus/">
+    <table class="pull-right">
+        <tr>
+      <td>Committee</td>
+      <td>
+        <select name="select2" id="t1">
+            {% for i in data %}
+            <option value="{{ i.id }}" {% if i.id == cid %} selected {% endif %}>{{ i.committee_name }}</option>
+            {% endfor %}
+      </select></td>
+        <td> <input type="submit" name="button" id="button" value="VIEW" class="btn btn-primary" /></td>
+    </tr>
+
+    </table>
+  <table  class="table table-bordered">
+    <tr>
+      <td>SL No</td>
+      <td>Date</td>
+      <td>Time</td>
+      <td>Work</td>
+      <td>Description</td>
+      <td>Committee member</td>
+      <td>Ph no</td>
+      <td>Status</td>
+      <td colspan="2"></td>
+    </tr>
+      {% for i in data2 %}
+    <tr>
+      <td>&nbsp;{{ forloop.counter }}</td>
+      <td>&nbsp;{{ i.date }}</td>
+      <td>&nbsp;{{ i.time }}</td>
+      <td>&nbsp;{{ i.work }}</td>
+      <td>&nbsp;{{ i.description }}</td>
+      <td>&nbsp;{{ i.COMMITTEE_MEMBER.MEMBER.name }}</td>
+      <td>&nbsp;{{ i.COMMITTEE_MEMBER.MEMBER.phone }}</td>
+      <td>&nbsp;{{ i.status }}</td>
+        <td><a href="/myapp/view_statuswork22/{{ i.id }}">View work status</a></td>
+      <td>
+          {% if i.status == 'pending' %}
+          <a href="/myapp/ward_setworkcompleted/{{ i.id }}">mark as completed</a>
+          {% else %}
+          {{ i.status }}
+          {% endif %}
+      </td>
+    </tr>
+      {% endfor %}
+  </table>
+</form>
+{% endblock %}
