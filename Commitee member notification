@@ -1,0 +1,39 @@
+{% extends "cmt_index.html" %}
+{% block body %}
+<form id="form1" name="form1" method="post" action="/myapp/comm_view_notification_search/">
+<h1 align="center"  ><b>VIEW NOTIFICATION</b></h1>
+    <div align="center">
+  <table  class="table table-bordered">
+    <tr>
+      <td Style="font-size:120%;">From date</td>
+      <td><label for="textfield"></label>
+      <input type="date" name="textfield" id="textfield" value={{ date1 }} required class='form-control' /></td>
+      <td Style="font-size:120%;">To date</td>
+      <td><label for="textfield2"></label>
+      <input type="date" name="textfield2" id="textfield2" value={{ date2 }} required class='form-control' /></td>
+      <td><input type="submit" name="button" id="button" value="Go" class="btn btn-primary" /></td>
+    </tr>
+  </table>
+  <table class="table table-bordered">
+    <tr>
+      <td Style="font-size:120%;">SL No</td>
+      <td Style="font-size:120%;">Date</td>
+      <td Style="font-size:120%;">Notification title</td>
+      <td Style="font-size:120%;">Description</td>
+
+    </tr>
+      {% for i in data %}
+    <tr>
+      <td>{{ forloop.counter }}</td>
+      <td>{{ i.date }}</td>
+      <td>{{ i.notification_title }}</td>
+      <td>{{ i.description }}</td>
+
+    </tr>
+      {% endfor %}
+  </table>
+  <p>&nbsp;</p>
+    </div>
+</form>
+
+{% endblock %}
