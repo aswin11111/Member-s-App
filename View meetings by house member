@@ -1,0 +1,271 @@
+java
+
+package com.example.mapp;
+
+import androidx.appcompat.app.AppCompatActivity;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
+
+import android.os.Bundle;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+import android.widget.Toast;
+
+import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
+import android.os.Bundle;
+
+public class meetings extends AppCompatActivity {
+    ListView lv;
+    String[]name,date,time,urllink,id;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_meetings);
+
+        lv= findViewById(R.id.meetings);
+        SharedPreferences sh = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        String ip = sh.getString("ip", "");
+        String url = "http://" + ip + ":8000/myapp/and_meetings";
+
+        RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
+        //    Toast.makeText(getApplicationContext(),"hai",Toast.LENGTH_SHORT).show();
+        StringRequest postRequest = new StringRequest(Request.Method.POST, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+
+                        //  Toast.makeText(getApplicationContext(),response,Toast.LENGTH_SHORT).show();
+
+
+                        // response
+                        try {
+                            JSONObject jsonObj = new JSONObject(response);
+                            String sucs = jsonObj.getString("status");
+                            if (sucs.equalsIgnoreCase("ok")) {
+//                                lid,name,place,photo,district,latitude,longitude
+
+                                JSONArray jsa = jsonObj.getJSONArray("data");
+                                id = new String[jsa.length()];
+
+
+                                name = new String[jsa.length()];
+                                date = new String[jsa.length()];
+                                time=new String[jsa.length()];
+                                urllink=new String[jsa.length()];
+
+
+                                //sof,vno,amount,date
+
+                                for (int i = 0; i < jsa.length(); i++) {
+                                    JSONObject jsob = jsa.getJSONObject(i);
+                                    id[i] = jsob.getString("id");
+
+
+                                    name[i] = jsob.getString("meeting_name");
+                                    date[i] = jsob.getString("date");
+                                    time[i]=jsob.getString("time");
+                                    urllink[i]=jsob.getString("urllink");
+
+
+
+
+
+                                }
+//                                ArrayAdapter<String> ad=new ArrayAdapter<String>(getApplicationContext(),android.R.layout.simple_list_item_1,achievements);
+//                                lv.setAdapter(ad);
+                                lv.setAdapter(new custom_meetings(getApplicationContext(), name,date,time,urllink));
+                                //    lv.setAdapter(new user_custom_view_worker(getApplicationContext(),id,achievements,date,report));
+
+
+                                //lv1.setAdapter(new Custom5(getApplicationContext(),id,plc,time));
+                            }
+                        } catch (Exception e) {
+                            Toast.makeText(getApplicationContext(), "eeeee" + e.toString(), Toast.LENGTH_LONG).show();
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        // error
+                        Toast.makeText(getApplicationContext(), "eeeee" + error.toString(), Toast.LENGTH_SHORT).show();
+                    }
+                }
+        ) {
+            @Override
+            protected Map<String, String> getParams() {
+                SharedPreferences sh = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                Map<String, String> params = new HashMap<String, String>();
+
+
+
+
+                return params;
+            }
+        };
+        postRequest.setRetryPolicy(new DefaultRetryPolicy(60000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
+
+        requestQueue.add(postRequest);
+
+    }
+}
+
+
+Custom
+
+package com.example.mapp;
+import android.content.Intent;
+import android.net.Uri;
+import android.widget.BaseAdapter;
+
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.preference.PreferenceManager;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.BaseAdapter;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+public class custom_meetings extends BaseAdapter{
+    private android.content.Context Context;
+    String[] c;
+    String[] d;
+    String[] e;
+    String[] f;
+
+
+
+    public custom_meetings(android.content.Context applicationContext, String[] c, String[] d,String[] e,String[] f) {
+
+        this.Context=applicationContext;
+        this.c=c;
+        this.d=d;
+        this.e=e;
+        this.f=f;
+    }
+
+    @Override
+    public int getCount() {
+
+        return f.length;
+    }
+
+    @Override
+    public Object getItem(int arg0) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public long getItemId(int arg0) {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    @Override
+    public View getView(int position, View convertview, ViewGroup parent) {
+
+
+        LayoutInflater inflator=(LayoutInflater)Context.getSystemService(android.content.Context.LAYOUT_INFLATER_SERVICE);
+
+        View gridView;
+        if(convertview==null)
+        {
+            gridView=new View(Context);
+            gridView=inflator.inflate(R.layout.custom_meetings, null);
+
+
+
+        }
+        else
+        {
+            gridView=(View)convertview;
+
+        }
+
+
+
+
+
+        TextView tv1=(TextView)gridView.findViewById(R.id.textView15);
+
+        TextView tv2=(TextView)gridView.findViewById(R.id.textView13);
+
+        TextView tv3=(TextView)gridView.findViewById(R.id.textView11);
+
+
+        TextView tv4=(TextView)gridView.findViewById(R.id.textView1);
+
+        tv4.setTag(position);
+        tv4.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                int pos=(int)view.getTag();
+                Uri gmmIntentUri = Uri.parse(f[pos]);
+                Intent In = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+                In.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                Context.startActivity(In);
+
+            }
+        });
+
+
+
+
+
+
+
+
+
+
+
+
+        //
+
+
+        /////////////////////
+
+
+
+
+
+        tv1.setTextColor(Color.BLACK);
+        tv2.setTextColor(Color.BLACK);
+
+        tv3.setTextColor(Color.BLACK);
+
+
+
+        //tv6.setTextColor(Color.BLACK);
+        //tv1.setText(c[position]);
+        //tv2.setText(d[position]);
+
+        tv1.setText(c[position]);
+        tv2.setText(d[position]);
+        tv3.setText(e[position]);
+        tv4.setText(f[position]);
+
+
+
+
+
+        return gridView;
+    }
+}
